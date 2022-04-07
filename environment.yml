@@ -1,0 +1,10 @@
+name: pl
+dependencies:
+  - python=3.8
+  - jupyter
+  - pylint
+  - rope
+  - pep8
+  - pip
+  - pip:
+    - -r requirements.txt
