@@ -1,2 +1,2 @@
-# pytorch_lightning_examples
-pytorch-lightning examples
+# NLP baselines
+A collection of baselines for various NLP tasks.

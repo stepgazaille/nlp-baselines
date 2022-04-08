@@ -7,10 +7,41 @@ import torch
 from torch.utils.data import DataLoader, random_split
 from torch.nn import CrossEntropyLoss
 from torch.nn.functional import one_hot
-from pytorch_lightning import LightningModule, Trainer, seed_everything
+from pytorch_lightning import LightningDataModule, LightningModule, Trainer, seed_everything
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from datasets import load_dataset, load_metric
 from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
+
+
+class Dataset(LightningDataModule):
+	def __init__(self, dataset_name_or_path = 'ag_news', batch_size = 1):
+		super().__init__()
+		self.dataset_name_or_path = dataset_name_or_path
+		self.batch_size = batch_size
+		
+	def prepare_data(self):
+		# Download dataset if not already done:
+		load_dataset(self.dataset_name_or_path)
+	
+	
+	def setup(self, stage):
+		
+		self.dataset = load_dataset(self.dataset_name_or_path)
+		if stage in (None, 'fit'):
+			self.train_split, self.val_split = random_split(self.dataset['train'], [120000 - 7600, 7600])
+		
+		if stage in (None, 'test'):
+			self.test_split = self.dataset['test']
+		
+	
+	def train_dataloader(self):
+		return DataLoader(self.train_split, num_workers=args.num_workers)
+		
+	def val_dataloader(self):
+		return DataLoader(self.val_split, num_workers=args.num_workers)
+		
+	def test_dataloader(self):
+		return DataLoader(self.test_split, num_workers=args.num_workers)
 
 
 class SequenceClassifier(LightningModule):
@@ -53,7 +84,6 @@ class SequenceClassifier(LightningModule):
 		return {'loss': loss, 'preds': preds, 'labels': y}
 
 
-
 if __name__ == '__main__':
 
 	arg_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
@@ -62,27 +92,18 @@ if __name__ == '__main__':
 	args = arg_parser.parse_args()
 	seed_everything(42)
 
-	dataset_name_or_path = 'ag_news'
-	dataset = load_dataset(dataset_name_or_path)
-	train_split, val_split = random_split(dataset['train'], [120000 - 7600, 7600])
-	test_split = dataset['test']
-
-	train_loader = DataLoader(train_split, num_workers=args.num_workers)
-	val_loader = DataLoader(val_split, num_workers=args.num_workers)
-	test_loader = DataLoader(test_split, num_workers=args.num_workers)
-
+	dataset = Dataset(dataset_name_or_path = 'ag_news', batch_size = 1)
 	model = SequenceClassifier()
 	trainer = Trainer(accelerator='gpu',
 					  auto_select_gpus=True,
 					  precision=16,
-					  auto_scale_batch_size='binsearch',
 					  max_epochs=args.max_epochs,
 					  default_root_dir='./',
 					  callbacks=[EarlyStopping(monitor='val_loss', mode='min')])
 	
 	
 	training_start_time = datetime.now()
-	trainer.fit(model, train_loader, test_loader)
+	trainer.fit(model, datamodule=dataset)
 	training_end_time = datetime.now()
 	print("Training comleted!")
 	print(f"Training time: {training_end_time - training_start_time}")
