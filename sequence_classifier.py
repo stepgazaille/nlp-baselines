@@ -111,7 +111,7 @@ if __name__ == '__main__':
 	arg_parser.add_argument('-m', '--model-name-or-path', default='distilbert-base-uncased', type=str, help="The model ID of a pretrained model hosted inside a model repo on huggingface.co")
 	arg_parser.add_argument('-g', '--gpus', default='[0]', type=str, help="Which GPUs to train on.")
 	arg_parser.add_argument('-l', '--log-dir', default='./', type=str, help="Default path for logs and weights ")
-	arg_parser.add_argument('-b', '--batch-size', default=1, type=int, help="How many samples per batch to load.")
+	arg_parser.add_argument('-b', '--batch-size', default=2, type=int, help="How many samples per batch to load.")
 	arg_parser.add_argument('-e', '--max-epochs', default=5, type=int, help="Stop training once this number of epochs is reached.")
 	arg_parser.add_argument('-w', '--num-workers', default=cpu_count(), type=int, help="Number of subprocesses to use for data loading.")
 	arg_parser.add_argument('-s', '--seed', default=42, type=int, help="The integer value seed for global random state.")
@@ -124,8 +124,6 @@ if __name__ == '__main__':
 	print("Preparing the data...")
 	dataset = Dataset(args.dataset, args.model_name_or_path, args.batch_size)
 	dataset.setup()
-	my_iter = iter(dataset.train_dataloader())
-	my_batch = next(my_iter)
 	print(my_batch)
 
 	print("Preparing the model...")
