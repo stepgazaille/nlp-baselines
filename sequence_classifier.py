@@ -124,7 +124,6 @@ if __name__ == '__main__':
 	print("Preparing the data...")
 	dataset = Dataset(args.dataset, args.model_name_or_path, args.batch_size)
 	dataset.setup()
-	print(my_batch)
 
 	print("Preparing the model...")
 	model = SequenceClassifier(args.model_name_or_path, dataset.label_names)
