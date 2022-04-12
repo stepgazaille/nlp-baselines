@@ -1,6 +1,6 @@
 name: pl
 dependencies:
-  - python=3.8
+  - python=3.9
   - jupyter
   - pylint
   - rope
