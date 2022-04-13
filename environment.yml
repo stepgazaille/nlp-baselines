@@ -1,7 +1,7 @@
 name: pl
 dependencies:
   - python=3.9
-  - jupyter
+  - jupyterlab
   - pylint
   - rope
   - pep8
