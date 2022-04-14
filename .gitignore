@@ -132,4 +132,4 @@ dmypy.json
 .vscode/
 
 # logs
-lightning_logs/
+*logs/
