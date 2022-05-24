@@ -23,9 +23,10 @@ if __name__ == '__main__':
 	arg_parser.add_argument('-b', '--batch-size', default=8, type=int, help="How many samples per batch to load")
 	arg_parser.add_argument('-e', '--max-epochs', default=100, type=int, help="Stop training once this number of epochs is reached")
 	arg_parser.add_argument('-r', '--learning-rate', default=2.0e-5, type=float, help="Learning rate")
+	arg_parser.add_argument('--auto-lr-find', default=False, action='store_true', help="Try to optimize initial learning rate for faster convergence. The \"--learning-rate\" parameter is ignored when set to True")
 	arg_parser.add_argument('-w', '--num-workers', default=cpu_count(), type=int, help="Number of subprocesses to use for data loading")
 	arg_parser.add_argument('-s', '--seed', default=42, type=int, help="The integer value seed for global random state")
-	arg_parser.add_argument('-p', '--precision', default=16, choices=[64, 32, 16], type=int,
+	arg_parser.add_argument('-p', '--precision', default=64, choices=[64, 32, 16], type=int,
 							help="Use double precision (64), full precision (32) or half precision (16)")
 	args = arg_parser.parse_args()
 	args.gpus = json.loads(args.gpus)
@@ -44,8 +45,16 @@ if __name__ == '__main__':
 					  max_epochs=args.max_epochs,
 					  precision=args.precision,					  
 					  default_root_dir=args.log_dir,
+					  auto_lr_find=args.auto_lr_find,
 					  logger=logger,
 					  callbacks=[EarlyStopping(monitor='val_loss', mode='min')])
+	
+	if args.auto_lr_find:
+		trainer.tune(model,
+					 train_dataloaders=dataset.train_dataloader(),
+					 val_dataloaders=dataset.val_dataloader())
+		args.learning_rate = model.learning_rate
+
 
 	print("Start training the model...")
 	hparams = {k: vars(args)[k] for k in vars(args) if k != 'log_dir'}
