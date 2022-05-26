@@ -27,7 +27,7 @@ if __name__ == '__main__':
 							help="Try to optimize initial learning rate for faster convergence")
 	arg_parser.add_argument('-w', '--num-workers', default=cpu_count(), type=int, help="Number of subprocesses to use for data loading")
 	arg_parser.add_argument('-s', '--seed', default=42, type=int, help="The integer value seed for global random state")
-	arg_parser.add_argument('-p', '--precision', default=64, choices=[64, 32, 16], type=int,
+	arg_parser.add_argument('-p', '--precision', default=16, choices=[64, 32, 16], type=int,
 							help="Use double precision (64), full precision (32) or half precision (16)")
 	args = arg_parser.parse_args()
 	args.gpus = json.loads(args.gpus)

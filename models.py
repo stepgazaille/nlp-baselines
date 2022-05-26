@@ -1,7 +1,7 @@
 from pytorch_lightning import LightningModule
 from transformers import AutoConfig, AutoModelForSequenceClassification
 from torch import Tensor, argmax
-from torch.nn import Softmax, CrossEntropyLoss
+from torch.nn import CrossEntropyLoss
 from torch.optim import Optimizer, Adam
 from sklearn.metrics import classification_report
 
@@ -14,11 +14,10 @@ class SequenceClassifier(LightningModule):
 		self.label_names = label_names
 		self.config = AutoConfig.from_pretrained(model_name_or_path, num_labels=len(self.label_names))
 		self.model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, config=self.config)
-		self.activation = Softmax(dim=1)
 		self.loss_function = CrossEntropyLoss()
 							
 	def forward(self, input_ids: Tensor) -> Tensor:
-		return self.activation(self.model(input_ids)['logits'])
+		return self.model(input_ids)['logits']
 
 	def configure_optimizers(self) -> Optimizer:
 		return Adam(self.parameters(), lr=self.learning_rate)
