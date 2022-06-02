@@ -5,6 +5,7 @@ dependencies:
   - pylint
   - rope
   - pep8
+  - black
   - pip
   - pip:
     - -r requirements.txt
