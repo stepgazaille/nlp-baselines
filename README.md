@@ -15,12 +15,12 @@ conda env create
 ### Sequence classification
 ```
 $ python train_sequence_classifier.py -h
-usage: train_sequence_classifier.py [-h] [-d {ag_news}] [-m MODEL_NAME_OR_PATH] [-g GPUS] [-l LOG_DIR] [-b BATCH_SIZE] [-e MAX_EPOCHS] [-r LEARNING_RATE] [-w NUM_WORKERS] [-s SEED]
+usage: train_sequence_classifier.py [-h] [-d {ag_news,banking77}] [-m MODEL_NAME_OR_PATH] [-g GPUS] [-l LOG_DIR] [-b BATCH_SIZE] [-e MAX_EPOCHS] [-r LEARNING_RATE] [--auto-lr-find] [-w NUM_WORKERS] [-s SEED]
                                     [-p {64,32,16}]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d {ag_news}, --dataset {ag_news}
+  -d {ag_news,banking77}, --dataset {ag_news,banking77}
                         The dataset ID of a sequence classification dataset hosted inside a dataset repo on huggingface.co (default: ag_news)
   -m MODEL_NAME_OR_PATH, --model-name-or-path MODEL_NAME_OR_PATH
                         The model ID of a pretrained model hosted inside a model repo on huggingface.co (default: distilbert-base-uncased)
@@ -33,8 +33,9 @@ optional arguments:
                         Stop training once this number of epochs is reached (default: 100)
   -r LEARNING_RATE, --learning-rate LEARNING_RATE
                         Learning rate (default: 2e-05)
+  --auto-lr-find        Try to optimize initial learning rate for faster convergence (default: False)
   -w NUM_WORKERS, --num-workers NUM_WORKERS
-                        Number of subprocesses to use for data loading (default: 4)
+                        Number of subprocesses to use for data loading (default: 40)
   -s SEED, --seed SEED  The integer value seed for global random state (default: 42)
   -p {64,32,16}, --precision {64,32,16}
                         Use double precision (64), full precision (32) or half precision (16) (default: 16)

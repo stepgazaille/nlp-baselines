@@ -14,7 +14,7 @@ environ['TOKENIZERS_PARALLELISM'] = 'false'
 if __name__ == '__main__':
 
 	arg_parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
-	arg_parser.add_argument('-d', '--dataset', default='ag_news', choices=['ag_news'], type=str,
+	arg_parser.add_argument('-d', '--dataset', default='ag_news', choices=['ag_news', 'banking77'], type=str,
 							help="The dataset ID of a sequence classification dataset hosted inside a dataset repo on huggingface.co")
 	arg_parser.add_argument('-m', '--model-name-or-path', default='distilbert-base-uncased', type=str,
 							help="The model ID of a pretrained model hosted inside a model repo on huggingface.co")
