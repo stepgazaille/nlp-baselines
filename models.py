@@ -1,7 +1,7 @@
 from pytorch_lightning import LightningModule
 from transformers import AutoConfig, AutoModelForSequenceClassification
 from torch import Tensor, argmax
-from torch.nn import CrossEntropyLoss
+from torch.nn.functional import cross_entropy
 from torch.optim import Optimizer, Adam
 from sklearn.metrics import classification_report
 
@@ -19,7 +19,6 @@ class SequenceClassifier(LightningModule):
         self.model = AutoModelForSequenceClassification.from_pretrained(
             model_name_or_path, config=self.config
         )
-        self.loss_function = CrossEntropyLoss()
 
     def forward(self, input_ids: Tensor) -> Tensor:
         return self.model(input_ids)["logits"]
@@ -29,13 +28,13 @@ class SequenceClassifier(LightningModule):
 
     def training_step(self, batch: dict, batch_idx: int) -> Tensor:
         output = self(batch["input_ids"])
-        loss = self.loss_function(output, batch["labels"])
+        loss = cross_entropy(output, batch["labels"])
         self.log("train_loss", loss)
         return loss
 
     def validation_step(self, batch: dict, batch_idx: int) -> Tensor:
         output = self(batch["input_ids"])
-        loss = self.loss_function(output, batch["labels"])
+        loss = cross_entropy(output, batch["labels"])
         self.log("val_loss", loss)
         return loss
 
